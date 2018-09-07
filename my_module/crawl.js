@@ -1,10 +1,9 @@
 var fetch = require("./fetch");
 var Crawler = require("crawler");
 var db = require('./database');
-
+var x = {};
 var c = new Crawler({
-	maxConnections: 1,
-	rateLimit: 1000,
+	maxConnections: 10,
 	jQuery: false,
 	userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/66.0.3359.181 Safari/537.36',
 	callback : function (error, res, done) {
