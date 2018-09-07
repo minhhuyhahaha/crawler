@@ -1,8 +1,8 @@
 var mysql = require('mysql');
 var con = mysql.createConnection({
-    host: "mysql:3306",
-    user: "crawler",
-    password: "12345",
+    host: "localhost",
+    user: "root",
+    password: "crawler12345",
     database: "crawlerdb"
 });
   
@@ -19,7 +19,7 @@ con.connect(function(err) {
 function insert(data){
     con.query("REPLACE INTO advertising SET ?", data, (err, results, fields) => {
         if (err) throw err;
-        //console.log("Saved: ",data['title']);
+        console.log("Saved: ",data['title']);
         //console.log(results);
     });
 }
