@@ -62,7 +62,7 @@ function parseDataUrl(data) {
 	if (x) {
 		return [...x].map(i => "https://batdongsan.com.vn" + i.href);
 	}
-	return null;
+	return [];
 }
 exports.parseDataContent = parseDataContent;
 exports.parseDataUrl = parseDataUrl;

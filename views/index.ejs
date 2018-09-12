@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        #data {
+            font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+            border-collapse: collapse;
+        }
+
+        #data td, #data th {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        #data tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        #data tr:hover {
+            background-color: #ddd;
+        }
+
+        #data th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            text-align: center;
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        span {
+            display: inline-block;
+            overflow: auto;
+            height: 200px;
+            min-width: 300px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <table id="data">
+        <tr>
+            <th>Url</th>
+            <th>Title</th>
+            <th>Content</th>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Address</th>
+            <th>Email</th>
+        </tr>
+        <% for(let i of results) {%>
+            <tr>
+                <td>
+                    <span>
+                        <%= i['url'] %>
+                    </span>
+                </td>
+                <td>
+                    <span>
+                        <%= i['title'] %>
+                    </span>
+                </td>
+                <td>
+                    <span>
+                        <%- i['content'] %>
+                    </span>
+                </td>
+                <td>
+                    <span>
+                        <%= i['name'] %>
+                    </span>
+                </td>
+                <td>
+                    <span>
+                        <%= i['phone'] %>
+                    </span>
+                </td>
+                <td>
+                    <span>
+                        <%= i['address'] %>
+                    </span>
+                </td>
+                <td>
+                    <span>
+                        <%= i['email'] %>
+                    </span>
+                </td>
+            </tr>
+            <% } %>
+    </table>
+</body>
+
+</html>
