@@ -1,50 +1,44 @@
-var jsdom = require('jsdom');
-var { JSDOM } = jsdom;
-
+const cheerio = require('cheerio')
 function parseDataContent(data) {
-	var dom = new JSDOM(data, {
-		features: {
-			QuerySelector: true
-		}
+	var $ = cheerio.load(data, {
+		decodeEntities: false
 	});
 	var field = {};
 	try {
-		var doc = dom.window.document;
 		//Tieu de
-		field['title'] = doc.querySelector(".pm-title").textContent.trim();
+		field['title'] = $(".pm-title").text().trim();
 		//Khai quat chi tiet
-		x = doc.querySelector("#product-detail > div.kqchitiet");
-		if(x){
-			var a = x.textContent.match(/Khu vực:(.*)\n*Giá:\n*(.*)\n*Diện tích:\n*(.*)/);
+		x = $("#product-detail > div.kqchitiet");
+		if (x) {
+			var a = x.text().match(/Khu vực:(.*)\n*Giá:\n*(.*)\n*Diện tích:\n*(.*)/);
 			field['area'] = a[1].trim();
 			field['price'] = a[2].trim();
 			field['area_size'] = a[3].trim();
 		}
 		//Noi dung
-		field['content'] = doc.querySelector(".pm-desc,.pm-content.stat").innerHTML.replace(/<a [^>]*>([^<]*)<\/a>/g, '$1').trim();
+		field['content'] = $(".pm-desc,.pm-content.stat").html().replace(/<a [^>]*>([^<]*)<\/a>/g, '$1').trim();
 		//Hinh thu nho
-		x = doc.querySelector("#thumbs");
-		field['image'] = x ? JSON.stringify([...x.children].map(i => i.children[0].src.replace('200x200', '745x510'))) : null;
+		x = $("#thumbs");
+		field['image'] = x ? JSON.stringify(x.children().map((i, e) => $(e).children().first().attr("src").replace('200x200', '745x510')).get()) : null;
 		//Dac diem bat dong san
-		x = doc.querySelector(".div-hold > .table-detail");
-		field['info_estate'] = x ? JSON.stringify([...x.children].map(i => [i.children[0].textContent.trim(), i.children[1].textContent.trim()])) : null;
+		x = $(".div-hold > .table-detail");
+		field['info_estate'] = x ? '[' + x.children().map((i, e) => JSON.stringify([$(e).children().eq(0).text().trim(), $(e).children().eq(1).text().trim()])).get().join() + ']' : null;
 		//Thong tin du an
-		x = doc.querySelector("#project > .table-detail");
-		field['info_project'] = x ? JSON.stringify([...x.children].map(i => [i.children[0].textContent.trim(), i.children[1].textContent.trim()])) : null;
+		x = $("#project > .table-detail");
+		field['info_project'] = x ? '[' + x.children().map((i, e) => JSON.stringify([$(e).children().eq(0).text().trim(), $(e).children().eq(1).text().trim()])).get().join() + ']' : null;
 		//Thong tin lien he
-		x = doc.querySelector("#divCustomerInfo,#divCustomerInfoAd");
+		x = $("#divCustomerInfo,#divCustomerInfoAd");
 		if (x) {
-			for (let i of [...x.children]) {
-				if (i.children.length > 1)
-					switch (i.children[0].textContent.trim()) {
-						case "Email": field['email'] = i.children[1].textContent.replace(/[^]*>(.*)<\/a>[^]*/, '$1').split(/[^\d]+/).map(i => i != '' ? String.fromCharCode(i) : "").join(""); break;
-						case "Tên liên lạc": field['name'] = i.children[1].textContent.trim(); break;
-						case "Mobile": case "Điện thoại": field['phone'] = i.children[1].textContent.trim(); break;
-						case "Địa chỉ": field['address'] = i.children[1].textContent.trim(); break;
+			x.children().each(function (i, e) {
+				if ($(e).children().length > 1)
+					switch ($(e).children().first().text().trim()) {
+						case "Email": field['email'] = $(e).children().eq(1).html().replace(/[^]*>(.*)<\/a>[^]*/, '$1').split(/[^\d]+/).map(i => i != '' ? String.fromCharCode(i) : "").join(""); break;
+						case "Tên liên lạc": field['name'] = $(e).children().eq(1).text().trim(); break;
+						case "Mobile": case "Điện thoại": field['phone'] = $(e).children().eq(1).text().trim(); break;
+						case "Địa chỉ": field['address'] = $(e).children().eq(1).text().trim(); break;
 					}
-			}
+			});
 		}
-
 	} catch (e) {
 		console.log(e);
 		return null;
@@ -52,15 +46,12 @@ function parseDataContent(data) {
 	return field;
 }
 function parseDataUrl(data) {
-	var dom = new JSDOM(data, {
-		features: {
-			QuerySelector: true
-		}
+	var $ = cheerio.load(data, {
+		decodeEntities: false
 	});
-	var doc = dom.window.document;
-	var x = doc.querySelectorAll(".p-title a");
+	var x = $(".p-title a");
 	if (x) {
-		return [...x].map(i => "https://batdongsan.com.vn" + i.href);
+		return x.map((i, e) => "https://batdongsan.com.vn" + $(e).attr("href")).get();
 	}
 	return [];
 }
